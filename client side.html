@@ -1,0 +1,110 @@
+<html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet " href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+</head>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-4xl mx-auto">
+        <!-- Search Bar -->
+        <div class="flex items-center mb-4">
+            <select id="categorySelect" class="border border-gray-300 p-2 rounded-l" onchange="search()">
+                <option value="ALL">ALL</option>
+                <option value="CULTURAL">CULTURAL</option>
+                <option value="SPORTS">SPORTS</option>
+                <option value="TECH">TECH</option>
+                <option value="BRAINSTORMING">BRAINSTORMING</option>
+                <option value="WORKSHOPS">WORKSHOPS</option>
+            </select>
+            <input type="text" id="searchInput" class="border border-gray-300 p-2 flex-grow" placeholder="Search...">
+            <button onclick="search()" class="border border-gray-300 p-2 rounded-r bg-gray-200">
+                <i class="fas fa-search"></i>
+            </button>
+        </div>
+
+        <!-- Weekly Calendar -->
+        <div class="overflow-x-auto">
+            <table class="min-w-full border-collapse border border-gray-300">
+                <thead>
+                    <tr>
+                        <th class="border border-gray-300 p-2">Mon</th>
+                        <th class="border border-gray-300 p-2">Tue</th>
+                        <th class="border border-gray-300 p-2">Wed</th>
+                        <th class="border border-gray-300 p-2">Thu</th>
+                        <th class="border border-gray-300 p-2">Fri</th>
+                        <th class="border border-gray-300 p-2">Sat</th>
+                        <th class="border border-gray-300 p-2">Sun</th>
+                    </tr>
+                </thead>
+                <tbody id="calendarBody">
+                    <!-- Data will be displayed here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        let events = [];
+
+        function search() {
+            const category = document.getElementById('categorySelect').value;
+            const searchInput = document.getElementById('searchInput').value;
+            const filteredEvents = events.filter((event) => {
+                return event.category === category && event.name.includes(searchInput);
+            });
+            displayEvents(filteredEvents);
+        }
+
+        function displayEvents(events) {
+            const calendarBody = document.getElementById('calendarBody');
+            calendarBody.innerHTML = '';
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            for (let i = 0; i < 7; i++) {
+                const dayRow = document.createElement('tr');
+                dayRow.innerHTML = `
+                    <td class="border border-gray-300 p-2"></td>
+                    <td class="border border-gray-300 p-2" id="${days[i]}-events"></td>
+                `;
+                calendarBody.appendChild(dayRow);
+            }
+            events.forEach((event) => {
+                const day = getDay(event.date);
+                const eventList = document.getElementById(`${day}-events`);
+                const eventItem = document.createElement('div');
+                eventItem.innerHTML = `
+                    <p>${event.name}</p>
+                    <p>${event.time}</p>
+                    <p>${event.location}</p>
+                    <p>${event.category}</p>
+                `;
+                eventList.appendChild(eventItem);
+            });
+        }
+
+        function getDay(date) {
+            const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+            const day = new Date(date).getDay();
+            return days[day];
+        }
+
+        // Sample data
+        events = [
+            {
+                name: 'Event 1',
+                category: 'CULTURAL',
+                date: '2023-02-20',
+                time: '10:00 AM',
+                location: 'Auditorium'
+            },
+            {
+                name: 'Event 2',
+                category: 'SPORTS',
+                date: '2023-02-22',
+                time: '2:00 PM',
+                location: 'Stadium'
+            },
+            // Add more events as needed
+        ];
+        displayEvents(events);
+    </script>
+</body>
+</html>
